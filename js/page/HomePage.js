@@ -1,0 +1,87 @@
+import React, {Component} from 'react';
+import {
+  StyleSheet, 
+  Text, 
+  View,
+  Image
+} from 'react-native';
+// 底部tab;
+import TabNavigator from 'react-native-tab-navigator';
+
+
+
+// tab 切换页面;
+import PopularPage from './PopularPage';
+import TrendingPage from './TrendingPage';
+import FavoritePage from './FavoritePage';
+import myPage from './my/myPage';
+import MyPage from './my/myPage';
+
+// tab 的切换标志；
+export const FLAG_TAB = {
+  flag_popularTab: 'tb_popular',
+  flag_trendingTab: 'tb_trending',
+  flag_favoriteTab: 'tb_favorite',
+  flag_my: 'tb_my'
+};
+
+
+export default class HomePage extends Component {
+  
+  constructor(props) {
+    super(props);
+    //this.params = this.props.navigation.state.params;
+    let selectedTab = 'tb_popular';
+    this.state = {
+      selectedTab: selectedTab
+    }
+  }
+  onTabClick(from, to) {
+    this.setState({selectedTab: to})
+  }
+  _renderTab(Commponent, selectedTab, title, renderIcon) {
+    return (
+      <TabNavigator.Item 
+        title={title}
+        selectedTitleStyle={styles.selectedTitle}
+        SelectedIconStyle={styles.tabBarSelectedIcon}
+        selected={this.state.selectedTab === selectedTab}
+        renderIcon={() => <Image style={styles.image} source={renderIcon} />}
+        renderSelectedIcon={() => <Image style={[styles.image,styles.tabBarSelectedIcon]} source={renderIcon} />}
+        onPress={() => this.onTabClick(this.state.selectedTab, selectedTab)}
+
+      >
+        <Commponent />
+      </TabNavigator.Item>
+    )
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <TabNavigator>
+          {this._renderTab(PopularPage, FLAG_TAB.flag_popularTab,'最热', require('../../res/images/ic_polular.png'))}
+          {this._renderTab(TrendingPage, FLAG_TAB.flag_trendingTab, '趋势', require('../../res/images/ic_trending.png'))}
+          {this._renderTab(FavoritePage, FLAG_TAB.flag_favoriteTab, '收藏', require('../../res/images/ic_favorite.png'))}
+          {this._renderTab(MyPage, FLAG_TAB.flag_my,'我的', require('../../res/images/ic_my.png'))}
+          
+        </TabNavigator>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  selectedTitle: {
+    color: '#2196F3'
+  },
+  tabBarSelectedIcon: {
+    tintColor: '#2196F3'
+  },
+  image: {
+    width: 26,
+    height: 26
+  }
+});
