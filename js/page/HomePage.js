@@ -14,7 +14,6 @@ import TabNavigator from 'react-native-tab-navigator';
 import PopularPage from './PopularPage';
 import TrendingPage from './TrendingPage';
 import FavoritePage from './FavoritePage';
-import myPage from './my/myPage';
 import MyPage from './my/myPage';
 
 // tab 的切换标志；
@@ -25,15 +24,19 @@ export const FLAG_TAB = {
   flag_my: 'tb_my'
 };
 
+// 主题样式；
+import ThemeFactory, {ThemeFlags} from '../../res/styles/ThemeFactory'
+
 
 export default class HomePage extends Component {
   
   constructor(props) {
     super(props);
-    //this.params = this.props.navigation.state.params;
-    let selectedTab = 'tb_popular';
+    this.params = this.props.navigation.state.params;
+    let selectedTab = this.params.selectedTab ? this.params.selectedTab : 'tb_popular';
     this.state = {
-      selectedTab: selectedTab
+      selectedTab: selectedTab,
+      theme: this.params.theme || ThemeFactory.createTheme(ThemeFlags.Default),
     }
   }
   onTabClick(from, to) {
@@ -43,15 +46,15 @@ export default class HomePage extends Component {
     return (
       <TabNavigator.Item 
         title={title}
-        selectedTitleStyle={styles.selectedTitle}
-        SelectedIconStyle={styles.tabBarSelectedIcon}
+        selectedTitleStyle={this.state.theme.styles.selectedTitleStyle}
+        SelectedIconStyle={this.state.theme.styles.tabBarSelectedIcon}
         selected={this.state.selectedTab === selectedTab}
         renderIcon={() => <Image style={styles.image} source={renderIcon} />}
-        renderSelectedIcon={() => <Image style={[styles.image,styles.tabBarSelectedIcon]} source={renderIcon} />}
+        renderSelectedIcon={() => <Image style={[styles.image,this.state.theme.styles.tabBarSelectedIcon]} source={renderIcon} />}
         onPress={() => this.onTabClick(this.state.selectedTab, selectedTab)}
 
       >
-        <Commponent />
+        <Commponent {...this.props} theme={this.state.theme}/>
       </TabNavigator.Item>
     )
   }
